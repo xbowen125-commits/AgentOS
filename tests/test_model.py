@@ -30,8 +30,7 @@ def test_fake_model_requires_a_response() -> None:
 
 
 @pytest.mark.asyncio
-async def test_model_stream_is_optional() -> None:
-    stream = FakeModel(["response"]).stream("prompt")
+async def test_fake_model_streams_generated_response() -> None:
+    chunks = [chunk async for chunk in FakeModel(["response"]).stream("prompt")]
 
-    with pytest.raises(NotImplementedError, match="Streaming is not supported"):
-        await anext(stream)
+    assert "".join(chunks) == "response"

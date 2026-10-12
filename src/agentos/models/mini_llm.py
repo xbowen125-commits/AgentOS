@@ -1,5 +1,6 @@
 """Model adapter for the MiniLLM-Serve HTTP API."""
 
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 
 from agentos.interfaces.model import Model
@@ -42,3 +43,9 @@ class MiniLLMModel(Model):
             payload,
             timeout=self.config.timeout,
         )
+
+    async def stream(self, prompt: str) -> AsyncIterator[str]:
+        """Yield ordered chunks from one non-streaming MiniLLM response."""
+        response = await self.generate(prompt)
+        for chunk in response:
+            yield chunk

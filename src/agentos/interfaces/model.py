@@ -12,9 +12,9 @@ class Model(ABC):
         """Generate text for a prompt."""
 
     async def stream(self, prompt: str) -> AsyncIterator[str]:
-        """Stream text chunks when implemented by a model adapter."""
+        """Return an async iterator of ordered text chunks when supported."""
         raise NotImplementedError("Streaming is not supported by this model adapter")
 
-        # This unreachable yield keeps the contract an async iterator for subclasses.
+        # The unreachable yield makes the default method itself an async generator.
         yield prompt
 

@@ -60,3 +60,15 @@ class MiniLLMConnectionError(MiniLLMError):
 class MiniLLMResponseError(MiniLLMError):
     """Raised when MiniLLM-Serve returns an invalid response."""
 
+
+class TraceStoreError(AgentOSError):
+    """Base exception for execution trace persistence errors."""
+
+
+class TraceNotFoundError(TraceStoreError):
+    """Raised when a requested execution trace does not exist."""
+
+
+class TraceFormatError(TraceStoreError):
+    """Raised when a trace document contains invalid JSON or data."""
+

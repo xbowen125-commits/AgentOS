@@ -1,5 +1,7 @@
 """Deterministic model adapter for tests and examples."""
 
+from collections.abc import AsyncIterator
+
 from agentos.interfaces.model import Model
 
 
@@ -19,3 +21,9 @@ class FakeModel(Model):
         response = self._responses[index]
         self._index += 1
         return response
+
+    async def stream(self, prompt: str) -> AsyncIterator[str]:
+        """Yield a deterministic generated response in ordered character chunks."""
+        response = await self.generate(prompt)
+        for chunk in response:
+            yield chunk
