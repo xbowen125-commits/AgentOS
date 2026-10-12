@@ -48,3 +48,15 @@ class PlannerError(AgentOSError):
 class PlannerOutputError(PlannerError):
     """Raised when model output does not match the planner JSON protocol."""
 
+
+class MiniLLMError(AgentOSError):
+    """Base exception for the MiniLLM-Serve model adapter."""
+
+
+class MiniLLMConnectionError(MiniLLMError):
+    """Raised when MiniLLM-Serve cannot be reached or times out."""
+
+
+class MiniLLMResponseError(MiniLLMError):
+    """Raised when MiniLLM-Serve returns an invalid response."""
+
