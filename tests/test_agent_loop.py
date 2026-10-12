@@ -14,7 +14,6 @@ from agentos.memory.models import MemoryItem
 from agentos.planner.planner import AgentDecision
 from agentos.tools.executor import ToolExecutor
 from agentos.tools.registry import ToolRegistry
-from tests.fakes.fake_model import FakeModel
 from tests.fakes.fake_planner import FakePlanner
 
 
@@ -61,7 +60,6 @@ def build_agent(
     for tool in tools or []:
         registry.register(tool)
     return Agent(
-        model=FakeModel(),
         planner=planner,
         tool_executor=ToolExecutor(registry),
         memory=FakeMemory(),

@@ -40,3 +40,11 @@ class MemoryVersionError(MemoryStoreError):
 class MemoryItemNotFoundError(MemoryStoreError):
     """Raised when a memory item cannot be found by ID."""
 
+
+class PlannerError(AgentOSError):
+    """Base exception for planner failures."""
+
+
+class PlannerOutputError(PlannerError):
+    """Raised when model output does not match the planner JSON protocol."""
+

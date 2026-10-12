@@ -3,7 +3,6 @@
 from agentos.core.decision import FinalAnswerDecision, ToolCallDecision
 from agentos.core.state import AgentState
 from agentos.interfaces.memory import MemoryStore
-from agentos.interfaces.model import Model
 from agentos.planner.planner import Planner
 from agentos.tools.executor import ToolExecutor
 
@@ -13,13 +12,11 @@ class Agent:
 
     def __init__(
         self,
-        model: Model,
         planner: Planner,
         tool_executor: ToolExecutor,
         memory: MemoryStore,
         max_steps: int = 10,
     ) -> None:
-        self.model = model
         self.planner = planner
         self.tool_executor = tool_executor
         self.memory = memory
