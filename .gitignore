@@ -15,6 +15,7 @@ work/
 # Local AgentOS runtime data
 memory.json
 traces/
+benchmarks/output/
 
 # Build artifacts
 build/

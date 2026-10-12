@@ -1,0 +1,102 @@
+[
+  {
+    "id": "calc_001",
+    "input": "计算 123*456",
+    "expected_answer": "56088",
+    "tags": ["calculator", "multiplication"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "123*456"}},
+      {"type": "final", "answer": "56088"}
+    ]
+  },
+  {
+    "id": "calc_002",
+    "input": "计算 1+1",
+    "expected_answer": "2",
+    "tags": ["calculator", "addition"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "1+1"}},
+      {"type": "final", "answer": "2"}
+    ]
+  },
+  {
+    "id": "calc_003",
+    "input": "计算 10/5",
+    "expected_answer": "2.0",
+    "tags": ["calculator", "division"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "10/5"}},
+      {"type": "final", "answer": "2.0"}
+    ]
+  },
+  {
+    "id": "calc_004",
+    "input": "计算 100-37",
+    "expected_answer": "63",
+    "tags": ["calculator", "subtraction"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "100-37"}},
+      {"type": "final", "answer": "63"}
+    ]
+  },
+  {
+    "id": "calc_005",
+    "input": "先计算 2+3，再把结果乘以 4",
+    "expected_answer": "20",
+    "tags": ["calculator", "multi_step"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "2+3"}},
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "5*4"}},
+      {"type": "final", "answer": "20"}
+    ]
+  },
+  {
+    "id": "calc_006",
+    "input": "计算 -8+3",
+    "expected_answer": "-5",
+    "tags": ["calculator", "negative_number"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "-8+3"}},
+      {"type": "final", "answer": "-5"}
+    ]
+  },
+  {
+    "id": "calc_007",
+    "input": "计算 2.5*4",
+    "expected_answer": "10.0",
+    "tags": ["calculator", "decimal"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "2.5*4"}},
+      {"type": "final", "answer": "10.0"}
+    ]
+  },
+  {
+    "id": "calc_008",
+    "input": "计算 1/0",
+    "expected_answer": "无法计算：除数不能为零",
+    "tags": ["calculator", "tool_error"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "calculator", "arguments": {"expression": "1/0"}},
+      {"type": "final", "answer": "无法计算：除数不能为零"}
+    ]
+  },
+  {
+    "id": "calc_009",
+    "input": "调用不存在的数学工具",
+    "expected_answer": "工具不可用",
+    "tags": ["tool_failure", "recovery"],
+    "model_responses": [
+      {"type": "tool_call", "tool_name": "missing_calculator", "arguments": {"expression": "1+1"}},
+      {"type": "final", "answer": "工具不可用"}
+    ]
+  },
+  {
+    "id": "calc_010",
+    "input": "这不是一个数学表达式",
+    "expected_answer": "无法识别有效计算表达式",
+    "tags": ["invalid_input"],
+    "model_responses": [
+      {"type": "final", "answer": "无法识别有效计算表达式"}
+    ]
+  }
+]

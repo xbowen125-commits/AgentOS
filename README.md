@@ -16,6 +16,7 @@ including planning, state management, memory, tool calling, and model adapters.
 - Step 6: MiniLLM-Serve Model Adapter
 - Step 7: Runtime Observability Layer
 - Step 8: End-to-End Agent Runtime Demo
+- Step 9: Evaluation and Benchmark Layer
 
 ## Architecture
 
@@ -92,4 +93,25 @@ python examples/calculator_agent.py
 Enter `计算 123*456`. A compatible MiniLLM-Serve model first returns a structured calculator tool
 decision and then a final answer based on the observation. AgentOS prints the answer and writes the
 run events to `traces/run_<id>.json`. See `examples/README.md` for the expected decision flow.
+
+## Evaluation
+
+AgentOS includes a lightweight, trace-based evaluation layer with no external evaluation service.
+It supports:
+
+- versionable JSON benchmark cases;
+- success-rate and failure-reason reporting;
+- average latency, model-call, and tool-call metrics;
+- metrics derived from existing runtime events and traces;
+- deterministic offline runs and Markdown reports.
+
+Run the bundled ten-case benchmark with:
+
+```powershell
+python -m benchmarks.evaluator
+```
+
+The command prints an `AgentOS Benchmark Report` and writes the same Markdown report under
+`benchmarks/output/`. The bundled suite uses `FakeModel` for deterministic offline measurement;
+`BenchmarkRunner` accepts a replaceable Agent factory for evaluating MiniLLM-backed runtimes.
 
