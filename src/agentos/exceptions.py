@@ -72,3 +72,11 @@ class TraceNotFoundError(TraceStoreError):
 class TraceFormatError(TraceStoreError):
     """Raised when a trace document contains invalid JSON or data."""
 
+
+class RuntimeControlError(AgentOSError):
+    """Base exception for runtime execution controls."""
+
+
+class RuntimeTimeoutError(RuntimeControlError):
+    """Raised when a controlled asynchronous operation exceeds its timeout."""
+

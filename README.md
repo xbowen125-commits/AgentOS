@@ -17,6 +17,7 @@ including planning, state management, memory, tool calling, and model adapters.
 - Step 7: Runtime Observability Layer
 - Step 8: End-to-End Agent Runtime Demo
 - Step 9: Evaluation and Benchmark Layer
+- Step 10: Runtime Performance Optimization
 
 ## Architecture
 
@@ -114,4 +115,24 @@ python -m benchmarks.evaluator
 The command prints an `AgentOS Benchmark Report` and writes the same Markdown report under
 `benchmarks/output/`. The bundled suite uses `FakeModel` for deterministic offline measurement;
 `BenchmarkRunner` accepts a replaceable Agent factory for evaluating MiniLLM-backed runtimes.
+
+## Performance
+
+AgentOS provides performance controls and profiling without coupling them to Agent core:
+
+- `RuntimeMetrics` derives total, planner, model, and tool latency from runtime traces;
+- `CachedModel` decorates any model adapter with a replaceable response cache;
+- `MemoryCache` provides a thread-safe process-local cache adapter;
+- cache hit and miss events join the active run trace through `EventBus`;
+- `TimeoutController` bounds asynchronous model or tool operations with AgentOS errors;
+- performance aggregation reports average latency, P95 latency, call counts, and cache hit rate.
+
+After generating benchmark traces, create a performance report with:
+
+```powershell
+python -m benchmarks.performance
+```
+
+The report is written to `benchmarks/output/performance.md`. Streaming calls continue to use the
+wrapped model's native stream and are not buffered by `CachedModel`.
 

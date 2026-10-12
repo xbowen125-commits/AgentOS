@@ -2,6 +2,7 @@
 
 import inspect
 from collections.abc import Awaitable, Callable
+from contextvars import ContextVar
 
 from agentos.events.event import AgentEvent
 
@@ -13,6 +14,15 @@ class EventBus:
 
     def __init__(self) -> None:
         self._handlers: list[EventHandler] = []
+        self._current_run_id: ContextVar[str | None] = ContextVar(
+            f"agentos_run_id_{id(self)}",
+            default=None,
+        )
+
+    @property
+    def current_run_id(self) -> str | None:
+        """Return the run ID associated with the current asynchronous context."""
+        return self._current_run_id.get()
 
     def subscribe(self, handler: EventHandler) -> None:
         """Register a handler for future events."""
@@ -20,6 +30,7 @@ class EventBus:
 
     async def emit(self, event: AgentEvent) -> None:
         """Notify every handler while isolating ordinary handler failures."""
+        self._current_run_id.set(event.run_id)
         for handler in tuple(self._handlers):
             try:
                 result = handler(event)
