@@ -1,129 +1,185 @@
+<p align="center">
+  <img src="docs/assets/logo.svg" alt="AgentOS Runtime" width="680">
+</p>
+
 # AgentOS Runtime
 
-Lightweight modular LLM Agent Runtime with multimodal interaction support.
+**A lightweight modular LLM Agent Runtime Framework<br>
+with multimodal interaction support.**
 
-AgentOS implements the execution infrastructure behind maintainable agent systems: structured
-planning, replaceable models, safe tools, memory ports, runtime events, traces, evaluation, and
-external interaction adapters. The core is implemented directly in Python without using a complete
-agent framework such as LangChain or AutoGen.
+![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![MIT License](https://img.shields.io/badge/License-MIT-22C55E)
+![Version v1.0.0](https://img.shields.io/badge/Version-v1.0.0-7C3AED)
+![Tests 82 passing](https://img.shields.io/badge/Tests-82%20passing-16A34A)
 
-> Release candidate: v1.0.0 · Python 3.10+ · MIT License
+AgentOS is a compact, typed, async-first runtime for learning and building production-style
+LLM agents without hiding the execution model behind a large agent framework. Its ports and
+adapters design keeps models, tools, memory, tracing, and multimodal interaction replaceable.
 
 ## Features
 
-- Bounded asynchronous Agent Loop with explicit state and structured decisions
-- Strict JSON `ModelPlanner` protocol without free-form action parsing
-- Replaceable `Model` interface with FakeModel and MiniLLM-Serve adapters
-- Tool registry, failure-isolated executor, and safe AST calculator
-- Versioned JSON memory behind a replaceable `MemoryStore` port
-- Runtime EventBus, JSON execution traces, and latency profiling
-- Streaming interface, response caching, and asynchronous timeout controls
-- Deterministic evaluation cases and Markdown benchmark reports
-- Engine-neutral perception, NPC action, and structured player-memory adapters
-- Type annotations, unit tests, Ruff checks, and mypy validation
+- Bounded asynchronous agent execution loop
+- JSON-only planner decision protocol
+- Pluggable model interface with deterministic fake and MiniLLM-Serve adapters
+- Tool registry, executor, structured observations, and a safe calculator
+- Abstract memory store with atomic JSON persistence
+- Runtime events, JSON traces, latency profiling, cache, and timeout controls
+- Trace-driven evaluation and performance benchmark reports
+- Multimodal interaction adapters and privacy-conscious NPC memory
+- Python 3.10+ typing, tests, Ruff, and mypy validation
 
 ## Architecture
 
 ```text
-Users / Unity / Spatial Inputs
-             |
-       Input Adapters
-             |
-     +-------v-------+
-     | Agent Runtime |
-     +-------+-------+
-             |
-      +------+------+----------------+
-      |             |                |
-   Planner       ToolExecutor     MemoryStore
-      |             |                |
- Model Interface  ToolRegistry   JSON / NPC Memory
-      |
- FakeModel / CachedModel / MiniLLMModel
-      |
- MiniLLM-Serve
-
-Agent Events -> EventBus -> JsonTraceStore -> Metrics / Benchmarks
+User / Unity / Multimodal Input
+              |
+              v
+      Interaction Layer
+              |
+              v
+        Agent Runtime
+              |
+              v
+           Planner
+              |
+              v
+       Model Interface
+              |
+              v
+       Tool / Memory
+              |
+              v
+     Trace / Evaluation
 ```
 
-Core modules depend on abstractions. HTTP, JSON files, caching, and spatial environments remain in
-replaceable adapters. See [Architecture](docs/architecture.md) and
-[Design Principles](docs/design_principles.md).
+The core depends on abstractions. MiniLLM-Serve, JSON storage, tools, caches, and NPC protocol
+objects remain adapters at the system boundary. See the detailed
+[architecture guide](docs/architecture.md).
 
 ## Quick Start
 
-```powershell
+```bash
 python -m venv .venv
+```
+
+Activate the environment on Windows PowerShell:
+
+```powershell
 .venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
+```
+
+Install the project and development tools:
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+Run the quality checks:
+
+```bash
 pytest
+ruff check .
+mypy src
+mypy benchmarks
 ```
 
-Verify the installed version:
+The calculator demo reads its MiniLLM endpoint from
+[`configs/default.json`](configs/default.json). Start a compatible MiniLLM-Serve backend, then run:
 
-```powershell
-python -c "import agentos; print(agentos.__version__)"
-```
-
-For the MiniLLM calculator demo, configure `configs/default.json`, start MiniLLM-Serve, and run:
-
-```powershell
+```bash
 python examples/calculator_agent.py
 ```
 
-Detailed setup instructions are in [Getting Started](docs/getting_started.md).
+## Demo
 
-## Examples
+![AgentOS protocol demo flow](docs/assets/demo-flow.svg)
 
-- `examples/calculator_agent.py` — MiniLLM-backed planning, calculator execution, final answer, and
-  JSON trace.
-- `examples/npc_bridge_demo.py` — minimal transport-neutral Unity message contract.
-- `examples/spatial_agent_demo.py` — complete offline perception, interaction, memory, Agent, and
-  NPC action flow.
+The diagram above is a protocol illustration, not a captured or simulated runtime screenshot.
 
-The NPC examples require no Unity SDK, camera, microphone, OpenCV, UDP, or WebSocket service.
+### Calculator Agent
+
+Run [`examples/calculator_agent.py`](examples/calculator_agent.py) with MiniLLM-Serve available.
+
+```text
+Input
+计算 123*456
+
+Final Answer
+56088
+```
+
+The complete flow is model decision → calculator call → observation → final answer → JSON trace.
+
+### Spatial AI NPC
+
+Run the protocol-only bridge or the full in-process spatial demo; neither requires Unity, a camera,
+or a microphone.
+
+```bash
+python examples/npc_bridge_demo.py
+python examples/spatial_agent_demo.py
+```
+
+```text
+player.wave
+    |
+    v
+AgentOS Runtime
+    |
+    v
+NPC Action: wave + speech
+```
+
+See [`examples/README.md`](examples/README.md) for prerequisites and expected output.
 
 ## Benchmark
 
-Run the deterministic ten-case evaluation suite and performance report:
+The current deterministic benchmark uses the 10 committed cases in
+[`benchmarks/cases.json`](benchmarks/cases.json). These values come from the existing generated
+benchmark report:
 
-```powershell
+| Metric | Result |
+| --- | ---: |
+| Cases | 10 |
+| Success Rate | 100% |
+| Average Latency | 0.0897s |
+| Average Model Calls | 2.00 |
+| Average Tool Calls | 1.00 |
+
+Run the evaluation and performance suites locally:
+
+```bash
 python -m benchmarks.evaluator
 python -m benchmarks.performance
 ```
 
-The v1.0.0 preparation reference run completed all 10 cases successfully, averaging 2.00 model
-calls and 1.00 tool call per case. Latency is machine-dependent; the local reference was
-approximately 0.09 seconds per case. See [Benchmark Framework](docs/benchmark.md).
+Benchmark results measure this deterministic local setup and are not model-quality claims. The
+[benchmark guide](docs/benchmark.md) explains the metrics and generated reports.
 
 ## Spatial AI NPC Integration
 
+AgentOS can serve as the reasoning backend for multimodal agents while remaining independent of
+Unity and sensor SDKs:
+
 ```text
-Vision / Speech / Unity
-          |
-  PerceptionEvent
-          |
- InteractionAdapter
-          |
-    AgentOS + LLM
-          |
-      NPCAction
-          |
-        Unity
+Vision / Speech / Interaction
+            |
+            v
+      Perception Event
+            |
+            v
+       AgentOS Runtime
+            |
+            v
+      LLM + Tool Runtime
+            |
+            v
+         NPC Action
 ```
 
-AgentOS accepts structured interaction events such as `player.wave` and `player.speech`, converts
-them into Agent inputs, and returns JSON-compatible actions. NPC memory stores only player ID,
-interaction count, last action, and relationship level—never raw images, audio, faces, or biometric
-data. See [NPC Integration](docs/npc_integration.md).
-
-## Roadmap
-
-- MiniLLM-Serve streaming transport
-- Additional Tool and MemoryStore adapters
-- Concurrency and load benchmark suites
-- Versioned interaction protocol schemas
-- Optional vector retrieval as an external adapter rather than a core dependency
+Only structured interaction state is retained. Raw images, audio, faces, and biometric data are
+outside the memory adapter's scope. Read the
+[NPC integration guide](docs/npc_integration.md) for the protocol boundary.
 
 ## Documentation
 
@@ -132,8 +188,18 @@ data. See [NPC Integration](docs/npc_integration.md).
 - [Benchmark Framework](docs/benchmark.md)
 - [Spatial AI NPC Integration](docs/npc_integration.md)
 - [Design Principles](docs/design_principles.md)
-- [Changelog](CHANGELOG.md)
+- [v1.0.0 Release Notes](release/v1.0.0.md)
+
+## Roadmap
+
+- Production MiniLLM-Serve streaming transport
+- SQLite and vector-backed memory adapters
+- Web search, code execution, and vision tools
+- Multi-agent coordination experiments
+- Live Unity transport implemented outside the core runtime
+
+These are future directions, not features included in v1.0.0.
 
 ## License
 
-AgentOS Runtime is available under the [MIT License](LICENSE).
+AgentOS Runtime is released under the [MIT License](LICENSE).

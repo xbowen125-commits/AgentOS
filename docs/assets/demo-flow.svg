@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330" role="img" aria-labelledby="title description">
+  <title id="title">AgentOS spatial interaction protocol flow</title>
+  <desc id="description">A conceptual flow from a player wave event through AgentOS to an NPC speech and wave action.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#090E1B"/><stop offset="1" stop-color="#121B34"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#22D3EE"/></linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0 12 6 0 12Z" fill="#5EEAD4"/></marker>
+  </defs>
+  <rect x="5" y="5" width="1190" height="320" rx="28" fill="url(#background)" stroke="#263652" stroke-width="2"/>
+  <text x="48" y="52" fill="#94A3B8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3">PROTOCOL FLOW · NOT A SCREENSHOT</text>
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <rect x="48" y="86" width="280" height="174" rx="18" fill="#111A2F" stroke="#344563" stroke-width="2"/>
+    <circle cx="88" cy="126" r="18" fill="#312E81" stroke="#A78BFA" stroke-width="2"/>
+    <path d="M80 126 86 132 97 119" fill="none" stroke="#DDD6FE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="118" y="121" fill="#F8FAFC" font-size="23" font-weight="700">Interaction Event</text>
+    <text x="78" y="175" fill="#C4B5FD" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="20">player.wave</text>
+    <text x="78" y="211" fill="#94A3B8" font-size="16">Structured perception input</text>
+    <path d="M348 173H435" stroke="#5EEAD4" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="454" y="86" width="292" height="174" rx="18" fill="#111A2F" stroke="url(#accent)" stroke-width="3"/>
+    <circle cx="600" cy="133" r="27" fill="#172554" stroke="#22D3EE" stroke-width="2"/><circle cx="600" cy="133" r="10" fill="#22D3EE"/>
+    <path d="M600 106V92M627 133H641M600 160V174M573 133H559" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+    <text x="520" y="205" fill="#F8FAFC" font-size="26" font-weight="750">AgentOS Runtime</text>
+    <text x="517" y="234" fill="#94A3B8" font-size="16">Plan · Act · Observe</text>
+    <path d="M766 173H853" stroke="#5EEAD4" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="872" y="86" width="280" height="174" rx="18" fill="#111A2F" stroke="#344563" stroke-width="2"/>
+    <circle cx="912" cy="126" r="18" fill="#164E63" stroke="#67E8F9" stroke-width="2"/>
+    <path d="M904 130H910L918 136V116L910 122H904Z" fill="#CFFAFE"/>
+    <text x="942" y="121" fill="#F8FAFC" font-size="23" font-weight="700">NPC Action</text>
+    <text x="902" y="173" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="18">action: wave</text>
+    <text x="902" y="207" fill="#C4B5FD" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="18">text: &quot;你好&quot;</text>
+    <text x="902" y="238" fill="#94A3B8" font-size="16">Unity-ready protocol output</text>
+  </g>
+  <text x="48" y="297" fill="#64748B" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14">Illustrative protocol payloads; run the examples to produce real local output.</text>
+</svg>

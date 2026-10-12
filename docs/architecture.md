@@ -7,29 +7,35 @@ external interaction environments.
 ## System overview
 
 ```text
-                         External Inputs
-                    User / Unity / Spatial NPC
-                               |
-                     Interaction Adapters
-                               |
-                        +-------------+
-                        |    Agent    |
-                        | Runtime Loop|
-                        +------+------+
-                               |
-                  +------------+------------+
-                  |                         |
-              Planner                  MemoryStore
-                  |                         |
-             Model Interface            Adapters
-                  |                   JSON / future DB
-        +---------+----------+
-        |                    |
-    FakeModel        MiniLLMModel / CachedModel
-                             |
-                       MiniLLM-Serve
+User / Unity / Multimodal Input
+              |
+              v
+      Interaction Layer
+              |
+              v
+        Agent Runtime
+              |
+              v
+           Planner
+              |
+              v
+       Model Interface
+              |
+              v
+       Tool / Memory
+              |
+              v
+     Trace / Evaluation
+```
 
-Agent -> Decision -> ToolExecutor -> ToolRegistry -> Tool -> Observation
+The detailed component boundaries retain independent ports and side channels:
+
+```text
+Agent -> Planner -> Model Interface -> FakeModel / MiniLLMModel / CachedModel
+  |
+  +-> Decision -> ToolExecutor -> ToolRegistry -> Tool -> Observation
+  |
+  +-> MemoryStore -> JsonMemory / future storage adapter
   |
   +-> EventBus -> Handlers / JsonTraceStore -> Runtime Metrics / Evaluation
 ```

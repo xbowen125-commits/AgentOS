@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title description">
+  <title id="title">AgentOS Runtime logo</title>
+  <desc id="description">A neural runtime core connected to four system nodes beside the AgentOS wordmark.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1020"/>
+      <stop offset="1" stop-color="#111A33"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="5" y="5" width="950" height="250" rx="34" fill="url(#panel)" stroke="#243150" stroke-width="2"/>
+  <g transform="translate(50 30)">
+    <path d="M100 4 183 52 183 148 100 196 17 148 17 52Z" fill="#0E1730" stroke="url(#signal)" stroke-width="4"/>
+    <circle cx="100" cy="100" r="47" fill="none" stroke="#33446D" stroke-width="2" stroke-dasharray="7 8"/>
+    <path d="M100 53V25M147 100H175M100 147V175M53 100H25" stroke="url(#signal)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M67 70 100 53 133 70 145 100 133 130 100 147 67 130 55 100Z" fill="#151F3D" stroke="url(#signal)" stroke-width="3"/>
+    <circle cx="100" cy="100" r="18" fill="url(#signal)" filter="url(#glow)"/>
+    <circle cx="100" cy="25" r="7" fill="#A78BFA"/><circle cx="175" cy="100" r="7" fill="#22D3EE"/>
+    <circle cx="100" cy="175" r="7" fill="#22D3EE"/><circle cx="25" cy="100" r="7" fill="#A78BFA"/>
+  </g>
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="290" y="126" fill="#F8FAFC" font-size="76" font-weight="750" letter-spacing="-2">AgentOS</text>
+    <text x="294" y="174" fill="#67E8F9" font-size="23" font-weight="650" letter-spacing="9">RUNTIME</text>
+    <path d="M293 195H752" stroke="#273858" stroke-width="2"/>
+    <text x="294" y="223" fill="#94A3B8" font-size="17" letter-spacing="1">MODULAR · OBSERVABLE · MULTIMODAL</text>
+  </g>
+</svg>
