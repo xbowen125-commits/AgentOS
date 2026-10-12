@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "mini_llm",
+    "base_url": "http://localhost:8000"
+  }
+}

@@ -12,6 +12,10 @@ venv/
 # Local task scratch files
 work/
 
+# Local AgentOS runtime data
+memory.json
+traces/
+
 # Build artifacts
 build/
 dist/

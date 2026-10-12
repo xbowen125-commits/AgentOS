@@ -10,12 +10,14 @@ class FakeMiniLLMServer:
         self,
         response_text: str = '{"type":"final","answer":"hello"}',
         *,
+        responses: list[str] | None = None,
         status_code: int = 200,
         raw_body: str | None = None,
         timeout: bool = False,
         connection_error: bool = False,
     ) -> None:
         self.response_text = response_text
+        self.responses = responses.copy() if responses is not None else None
         self.status_code = status_code
         self.raw_body = raw_body
         self.timeout = timeout
@@ -31,4 +33,8 @@ class FakeMiniLLMServer:
             raise httpx.ConnectError("simulated connection failure", request=request)
         if self.raw_body is not None:
             return httpx.Response(self.status_code, text=self.raw_body)
-        return httpx.Response(self.status_code, json={"text": self.response_text})
+        response_text = self.response_text
+        if self.responses:
+            response_index = min(len(self.requests) - 1, len(self.responses) - 1)
+            response_text = self.responses[response_index]
+        return httpx.Response(self.status_code, json={"text": response_text})

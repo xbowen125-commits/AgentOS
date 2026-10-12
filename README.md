@@ -15,6 +15,7 @@ including planning, state management, memory, tool calling, and model adapters.
 - Step 5: Model Adapter Layer
 - Step 6: MiniLLM-Serve Model Adapter
 - Step 7: Runtime Observability Layer
+- Step 8: End-to-End Agent Runtime Demo
 
 ## Architecture
 
@@ -58,4 +59,37 @@ The `Model` interface also supports asynchronous streaming. `FakeModel` and `Min
 preserve chunk order; the current MiniLLM implementation calls the non-streaming `/generate`
 endpoint once and yields its response as character chunks. A true streaming transport can replace
 this placeholder without changing AgentOS core.
+
+## End-to-end demo
+
+```text
+User
+  |
+Agent
+  |
+ModelPlanner
+  |
+MiniLLMModel -> MiniLLM-Serve
+  |
+JSON Decision
+  |
+Calculator Tool
+  |
+Observation -> Final Answer
+  |
+JSON Trace
+```
+
+The calculator example demonstrates the complete runtime path without adding model or tool logic
+to Agent core. Model connection settings come from `configs/default.json`.
+
+Start MiniLLM-Serve, then run:
+
+```powershell
+python examples/calculator_agent.py
+```
+
+Enter `计算 123*456`. A compatible MiniLLM-Serve model first returns a structured calculator tool
+decision and then a final answer based on the observation. AgentOS prints the answer and writes the
+run events to `traces/run_<id>.json`. See `examples/README.md` for the expected decision flow.
 

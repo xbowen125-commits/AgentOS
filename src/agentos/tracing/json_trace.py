@@ -46,7 +46,7 @@ class JsonTraceStore:
         if not run_id:
             raise ValueError("run_id must not be empty")
         digest = hashlib.sha256(run_id.encode("utf-8")).hexdigest()
-        return self.directory / f"{digest}.json"
+        return self.directory / f"run_{digest}.json"
 
     def _save_unlocked(self, path: Path, trace: TraceRecord) -> None:
         document = {
