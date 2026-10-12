@@ -40,10 +40,11 @@ async def test_calculator_agent_runs_end_to_end_with_trace(tmp_path: Path) -> No
     assert state.history[1] == Observation(success=True, result="56088")
     assert isinstance(state.history[2], FinalAnswerDecision)
     assert get_final_answer(state) == "56088"
-    assert len(server.requests) == 2
-    second_request = json.loads(server.requests[1].content)
-    assert "observation" in second_request["prompt"]
-    assert "56088" in second_request["prompt"]
+    assert len(server.requests) == 3
+    second_request = json.loads(server.requests[2].content)
+    prompt = second_request["messages"][0]["content"]
+    assert "observation" in prompt
+    assert "56088" in prompt
 
     trace = runtime.trace_store.load(state.run_id)
     trace_files = list((tmp_path / "traces").glob("run_*.json"))

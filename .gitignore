@@ -19,6 +19,9 @@ benchmarks/output/
 npc_memory.json
 npc_traces/
 
+# Local backend configuration (copy from the committed example)
+configs/mini_llm.json
+
 # Build artifacts
 build/
 dist/

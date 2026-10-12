@@ -26,4 +26,4 @@ async def test_mini_llm_stream_reuses_generate_and_preserves_order() -> None:
     chunks = [chunk async for chunk in model.stream("prompt")]
 
     assert chunks == ["h", "e", "l", "l", "o"]
-    assert len(server.requests) == 1
+    assert len(server.requests) == 2

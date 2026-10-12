@@ -27,10 +27,16 @@ async def test_generate_returns_response_text() -> None:
     result = await model.generate("hello")
 
     assert result == "response text"
-    assert len(server.requests) == 1
-    request = server.requests[0]
-    assert request.url == "http://mini-llm.test/generate"
-    assert json.loads(request.content) == {"prompt": "hello", "max_tokens": 128}
+    assert len(server.requests) == 2
+    assert server.requests[0].url == "http://mini-llm.test/health"
+    request = server.requests[1]
+    assert request.url == "http://mini-llm.test/v1/chat/completions"
+    assert json.loads(request.content) == {
+        "model": "Qwen/Qwen2.5-1.5B-Instruct",
+        "messages": [{"role": "user", "content": "hello"}],
+        "max_tokens": 128,
+        "stream": False,
+    }
 
 
 @pytest.mark.asyncio

@@ -20,9 +20,36 @@ class HttpClient:
         timeout: float,
     ) -> str:
         """POST a JSON payload and return the response's text field."""
+        data = await self.post_json_object(url, payload, timeout)
+        text = data.get("text")
+        if not isinstance(text, str):
+            raise MiniLLMResponseError("MiniLLM-Serve response field 'text' must be a string")
+        return text
+
+    async def get_json_object(self, url: str, timeout: float) -> dict[str, Any]:
+        """GET a JSON object while normalizing transport and response failures."""
+        return await self._request_json_object("GET", url, timeout=timeout)
+
+    async def post_json_object(
+        self,
+        url: str,
+        payload: dict[str, Any],
+        timeout: float,
+    ) -> dict[str, Any]:
+        """POST a JSON object and return a validated JSON object response."""
+        return await self._request_json_object("POST", url, payload=payload, timeout=timeout)
+
+    async def _request_json_object(
+        self,
+        method: str,
+        url: str,
+        *,
+        timeout: float,
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         try:
             async with httpx.AsyncClient(transport=self._transport, timeout=timeout) as client:
-                response = await client.post(url, json=payload)
+                response = await client.request(method, url, json=payload)
         except httpx.TimeoutException:
             raise MiniLLMConnectionError(f"MiniLLM-Serve request timed out after {timeout}s") from None
         except httpx.RequestError:
@@ -40,7 +67,4 @@ class HttpClient:
 
         if not isinstance(data, dict):
             raise MiniLLMResponseError("MiniLLM-Serve response must be a JSON object")
-        text = data.get("text")
-        if not isinstance(text, str):
-            raise MiniLLMResponseError("MiniLLM-Serve response field 'text' must be a string")
-        return text
+        return dict(data)

@@ -32,3 +32,14 @@ Final Answer:
 
 Each run writes its lifecycle events to `traces/run_<id>.json`. Local trace and memory files are
 ignored by Git.
+
+## Real MiniLLM-Serve Validation
+
+Copy `configs/mini_llm.example.json` to the ignored `configs/mini_llm.json`, start MiniLLM-Serve
+separately, and run:
+
+```powershell
+python examples/real_mini_llm_agent.py
+```
+
+See `docs/real_backend.md` for the HTTP contract, trace guarantees, and troubleshooting.
