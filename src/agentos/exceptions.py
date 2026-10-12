@@ -24,3 +24,19 @@ class ToolArgumentError(ToolRuntimeError):
 class ToolExecutionError(ToolRuntimeError):
     """Raised when a tool fails during execution."""
 
+
+class MemoryStoreError(AgentOSError):
+    """Base exception for memory persistence errors."""
+
+
+class MemoryFormatError(MemoryStoreError):
+    """Raised when a memory document is not valid JSON or has an invalid shape."""
+
+
+class MemoryVersionError(MemoryStoreError):
+    """Raised when a memory document uses an unsupported schema version."""
+
+
+class MemoryItemNotFoundError(MemoryStoreError):
+    """Raised when a memory item cannot be found by ID."""
+

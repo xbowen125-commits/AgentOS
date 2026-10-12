@@ -1,28 +1,45 @@
 """Tests for the minimal Agent runtime loop."""
 
+import builtins
 from typing import Any
 
 import pytest
 
 from agentos.core.agent import Agent
 from agentos.core.decision import FinalAnswerDecision, ToolCallDecision
-from agentos.exceptions import ToolNotFoundError
-from agentos.interfaces.memory import Memory
+from agentos.core.observation import Observation
+from agentos.interfaces.memory import MemoryStore
 from agentos.interfaces.tool import Tool
+from agentos.memory.models import MemoryItem
 from agentos.planner.planner import AgentDecision
-from agentos.tools.executor import Observation
+from agentos.tools.executor import ToolExecutor
+from agentos.tools.registry import ToolRegistry
 from tests.fakes.fake_model import FakeModel
 from tests.fakes.fake_planner import FakePlanner
 
 
-class FakeMemory(Memory):
+class FakeMemory(MemoryStore):
     """Minimal memory dependency that is not used by the Step 3 loop."""
 
-    def store(self, data: dict[str, Any]) -> None:
-        pass
+    def __init__(self) -> None:
+        self.items: dict[str, MemoryItem] = {}
 
-    def retrieve(self) -> None:
-        return None
+    def save(self, item: MemoryItem) -> None:
+        self.items[item.id] = item
+
+    def get(self, item_id: str) -> MemoryItem:
+        return self.items[item_id]
+
+    def list(self) -> builtins.list[MemoryItem]:
+        return builtins.list(self.items.values())
+
+    def query(self, type: str | None = None) -> builtins.list[MemoryItem]:
+        if type is None:
+            return self.list()
+        return [item for item in self.items.values() if item.type == type]
+
+    def delete(self, item_id: str) -> None:
+        del self.items[item_id]
 
 
 class EchoTool(Tool):
@@ -40,10 +57,13 @@ def build_agent(
     tools: list[Tool] | None = None,
     max_steps: int = 10,
 ) -> Agent:
+    registry = ToolRegistry()
+    for tool in tools or []:
+        registry.register(tool)
     return Agent(
         model=FakeModel(),
         planner=planner,
-        tools=tools or [],
+        tool_executor=ToolExecutor(registry),
         memory=FakeMemory(),
         max_steps=max_steps,
     )
@@ -74,7 +94,7 @@ async def test_agent_executes_tool_and_continues_planning() -> None:
     assert state.finished is True
     assert state.history == [
         tool_decision,
-        Observation(tool_name="echo", success=True, result="observation"),
+        Observation(success=True, result="observation"),
         final_decision,
     ]
 
@@ -94,9 +114,9 @@ async def test_agent_stops_at_max_steps() -> None:
     assert state.finished is False
     assert state.history == [
         decisions[0],
-        Observation(tool_name="echo", success=True, result="first"),
+        Observation(success=True, result="first"),
         decisions[1],
-        Observation(tool_name="echo", success=True, result="second"),
+        Observation(success=True, result="second"),
     ]
 
 
@@ -111,6 +131,7 @@ async def test_agent_continues_after_tool_error() -> None:
     observation = state.history[1]
     assert isinstance(observation, Observation)
     assert observation.success is False
-    assert isinstance(observation.error, ToolNotFoundError)
+    assert observation.error_type == "ToolNotFoundError"
+    assert observation.error_message == "Tool not found: missing"
     assert state.finished is True
     assert state.history[-1] == final_decision
