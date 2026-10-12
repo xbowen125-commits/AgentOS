@@ -6,3 +6,8 @@ from agentos.memory.models import MemoryItem
 
 __all__ = ["JsonMemory", "MemoryItem", "MemoryManager"]
 
+"""Memory models, ports, and persistence adapters."""
+
+from agentos.memory.npc import NPCMemory, PlayerProfile
+
+__all__ = ["NPCMemory", "PlayerProfile"]

@@ -18,6 +18,7 @@ including planning, state management, memory, tool calling, and model adapters.
 - Step 8: End-to-End Agent Runtime Demo
 - Step 9: Evaluation and Benchmark Layer
 - Step 10: Runtime Performance Optimization
+- Step 11: Spatial AI NPC Integration
 
 ## Architecture
 
@@ -135,4 +136,41 @@ python -m benchmarks.performance
 
 The report is written to `benchmarks/output/performance.md`. Streaming calls continue to use the
 wrapped model's native stream and are not buffered by `CachedModel`.
+
+## Spatial AI NPC integration
+
+AgentOS can serve as the reasoning backend for multimodal and spatial AI agents while keeping
+engine-specific dependencies outside the runtime core:
+
+```text
+Vision / Speech / Unity
+          |
+  PerceptionEvent
+          |
+ InteractionAdapter
+          |
+    AgentOS Runtime
+     /          \
+NPC Memory    Planner -> Model
+          |
+      NPCAction
+          |
+        Unity
+```
+
+The adapter accepts structured events such as `player.wave`, `player.look`, and `player.speech`,
+converts them into Agent inputs, and returns transport-neutral NPC actions. Runtime events include
+`interaction.received`, `npc.action.generated`, and `memory.updated`.
+
+NPC memory stores only a player ID, interaction count, last action, and bounded relationship level.
+It does not store faces, raw images, audio, or biometric data.
+
+Run the protocol-only bridge example with:
+
+```powershell
+python examples/npc_bridge_demo.py
+```
+
+The example simulates a Unity message and returns a JSON action without UDP, WebSocket, Unity SDK,
+camera, microphone, OpenCV, or other game-engine dependencies.
 

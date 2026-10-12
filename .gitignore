@@ -16,6 +16,8 @@ work/
 memory.json
 traces/
 benchmarks/output/
+npc_memory.json
+npc_traces/
 
 # Build artifacts
 build/
