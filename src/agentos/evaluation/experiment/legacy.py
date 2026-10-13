@@ -1,4 +1,4 @@
-"""Explicit baseline/variant comparison; no automatic runtime mutations."""
+"""Compatible v1 baseline/variant API, retained after conversion to a package."""
 
 from collections.abc import Sequence
 from copy import deepcopy
