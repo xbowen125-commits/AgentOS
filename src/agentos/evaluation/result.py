@@ -1,7 +1,11 @@
 """State-evaluation results; separate from the v1 trace result."""
 
 from dataclasses import asdict, dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from agentos.evaluation.failure import FailureAnalysis
+    from agentos.tracing import TraceRecord
 
 
 @dataclass(frozen=True)
@@ -16,3 +20,9 @@ class EvaluationResult:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    def analyze_failure(self, trace: "TraceRecord") -> "FailureAnalysis | None":
+        """Optionally inspect trace evidence without changing result serialization."""
+        from agentos.evaluation.failure import FailureAnalyzer
+
+        return FailureAnalyzer().analyze(trace, self)

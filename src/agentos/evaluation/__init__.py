@@ -2,6 +2,7 @@
 
 from agentos.evaluation.checker import StateChecker
 from agentos.evaluation.evaluator import EvaluationResult, Evaluator, ExpectedResult
+from agentos.evaluation.failure import FailureAnalysis, FailureAnalyzer, FailureCategory
 from agentos.evaluation.metrics import EvaluationMetrics
 from agentos.evaluation.report import render_markdown_report, write_markdown_report
 from agentos.evaluation.result import EvaluationResult as StateEvaluationResult
@@ -17,6 +18,9 @@ __all__ = [
     "EvaluationTask",
     "Evaluator",
     "ExpectedResult",
+    "FailureAnalysis",
+    "FailureAnalyzer",
+    "FailureCategory",
     "StateChecker",
     "StateEvaluationResult",
     "render_markdown_report",
