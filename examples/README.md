@@ -77,3 +77,14 @@ python -m examples.evaluate_agent
 
 The Markdown report is written to `outputs/evaluation_report.md`. See `docs/evaluation.md` for
 metric definitions, coverage, Workflow scoring, and recovery evidence.
+
+## Trace Replay
+
+Inspect existing trace files without starting any backend:
+
+```powershell
+python examples/replay_trace.py --trace traces/evaluation/run_HASH.json
+python examples/replay_trace.py --run-id YOUR_RUN_ID --trace-dir traces/real_backend
+```
+
+See `docs/replay.md` for summary counters, failed runs, and optional same-run state enrichment.
