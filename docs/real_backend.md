@@ -92,6 +92,34 @@ The real mode can consume model time and is never selected implicitly.
 
 ## Troubleshooting
 
+### Decision guardrails
+
+The real calculator demo configures `required_tool="calculator"` on `ModelPlanner`.
+`DecisionValidator` rejects unknown tools, missing or malformed arguments, premature final
+answers, empty answers, and answers that differ from the latest successful calculator observation.
+The validator runs after parsing and inside the repair retry boundary, so invalid decisions never
+enter AgentState history. Core execution and tool behavior remain unchanged.
+
+Applications choose the required tool explicitly for their task; general conversational tasks
+can omit this policy. Pass `tools=[]` to disallow tool calls. Omitting tool descriptions retains
+compatibility with legacy planners, without enabling tool-contract checks.
+
+The tool schema validator supports object/array/scalar types, properties, required fields,
+additionalProperties, items, enum, length/item bounds, and numeric bounds. It rejects unsupported
+schema constraints instead of treating them as validated.
+
+### Structured output recovery settings
+
+`ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION], max_retries=2, event_bus=event_bus)`
+performs one initial request and at most two repair requests per planner step. Invalid JSON or
+missing required calculator arguments trigger repair. Set `max_retries=0` to disable recovery.
+Transport failures propagate immediately.
+
+Retry events are `planner.retry.started`, `planner.retry.completed`, and `planner.retry.failed`.
+Their payload contains only the attempt number. Prompts and model output are not stored in these
+events. Existing `model.called` events count planner steps; add the number of
+`planner.retry.started` events when counting model requests that include repairs.
+
 ### Configuration not found
 
 Create `configs/mini_llm.json` from the example. Do not commit private overrides.

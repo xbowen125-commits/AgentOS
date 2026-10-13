@@ -46,7 +46,7 @@ def build_mini_llm_agent_factory(
         trace_store = JsonTraceStore(output_path / "traces")
         event_bus.subscribe(trace_store.append)
         agent = Agent(
-            planner=ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION]),
+            planner=ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION], event_bus=event_bus),
             tool_executor=ToolExecutor(registry),
             memory=JsonMemory(output_path / "memory" / f"{case.id}.json"),
             event_bus=event_bus,

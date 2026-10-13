@@ -70,7 +70,6 @@ def build_runtime(
 ) -> DemoRuntime:
     """Assemble the real AgentOS runtime with an injectable HTTP boundary."""
     model = MiniLLMModel(load_model_config(config_path), http_client=http_client)
-    planner = ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION])
 
     registry = ToolRegistry()
     registry.register(CalculatorTool())
@@ -79,6 +78,7 @@ def build_runtime(
     event_bus = EventBus()
     trace_store = JsonTraceStore(trace_directory)
     event_bus.subscribe(trace_store.append)
+    planner = ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION], event_bus=event_bus)
 
     agent = Agent(
         planner=planner,

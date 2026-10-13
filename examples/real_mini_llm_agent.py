@@ -107,7 +107,12 @@ def build_runtime(
     event_bus = EventBus()
     event_bus.subscribe(ValidationTraceHandler(trace_store))
     agent = Agent(
-        planner=ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION]),
+        planner=ModelPlanner(
+            model,
+            tools=[CALCULATOR_DESCRIPTION],
+            event_bus=event_bus,
+            required_tool="calculator",
+        ),
         tool_executor=ToolExecutor(registry),
         memory=JsonMemory(memory_path),
         event_bus=event_bus,
