@@ -1,14 +1,16 @@
 """Prompt construction for the JSON model planner."""
 
 import json
+from collections.abc import Sequence
 from typing import Any
 
 from agentos.core.decision import FinalAnswerDecision, ToolCallDecision
 from agentos.core.observation import Observation
 from agentos.core.state import AgentState
+from agentos.planner.tool_prompt import ToolDescription, build_tool_prompt
 
 
-def build_planner_prompt(state: AgentState) -> str:
+def build_planner_prompt(state: AgentState, tools: Sequence[ToolDescription] = ()) -> str:
     """Build a prompt containing only task input, public history, and output schema."""
     history = [_serialize_history_item(item) for item in state.history]
     return (
@@ -16,6 +18,7 @@ def build_planner_prompt(state: AgentState) -> str:
         "Allowed outputs:\n"
         '{"type":"tool_call","tool_name":"<name>","arguments":{}}\n'
         '{"type":"final","answer":"<answer>"}\n'
+        f"{build_tool_prompt(tools)}\n"
         f"User input: {json.dumps(state.user_input, ensure_ascii=False)}\n"
         f"History: {json.dumps(history, ensure_ascii=False)}"
     )

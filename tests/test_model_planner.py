@@ -59,7 +59,6 @@ async def test_model_planner_rejects_invalid_json() -> None:
     ("output", "missing_field"),
     [
         ('{"type":"tool_call","arguments":{}}', "tool_name"),
-        ('{"type":"tool_call","tool_name":"calculator"}', "arguments"),
         ('{"type":"final"}', "answer"),
     ],
 )

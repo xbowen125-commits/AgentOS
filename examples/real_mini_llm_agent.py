@@ -19,6 +19,7 @@ from agentos.memory.json_memory import JsonMemory
 from agentos.models.http_client import HttpClient
 from agentos.models.mini_llm import MiniLLMConfig, MiniLLMModel
 from agentos.planner.model_planner import ModelPlanner
+from agentos.planner.tool_prompt import CALCULATOR_DESCRIPTION
 from agentos.tools.builtin.calculator import CalculatorTool
 from agentos.tools.executor import ToolExecutor
 from agentos.tools.registry import ToolRegistry
@@ -106,7 +107,7 @@ def build_runtime(
     event_bus = EventBus()
     event_bus.subscribe(ValidationTraceHandler(trace_store))
     agent = Agent(
-        planner=ModelPlanner(model),
+        planner=ModelPlanner(model, tools=[CALCULATOR_DESCRIPTION]),
         tool_executor=ToolExecutor(registry),
         memory=JsonMemory(memory_path),
         event_bus=event_bus,
