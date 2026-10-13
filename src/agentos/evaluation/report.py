@@ -3,7 +3,9 @@
 from collections.abc import Sequence
 from pathlib import Path
 
+from agentos.evaluation.benchmark import BenchmarkResult
 from agentos.evaluation.evaluator import EvaluationResult
+from agentos.evaluation.experiment import ExperimentResult
 from agentos.evaluation.metrics import EvaluationMetrics
 
 
@@ -63,4 +65,53 @@ def write_markdown_report(
     report_path = Path(path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(render_markdown_report(results), encoding="utf-8")
+    return report_path
+
+
+def render_reliability_report(result: BenchmarkResult | ExperimentResult) -> str:
+    """Render categorical metrics only, preserving all v1 report functions."""
+    results = result.results if isinstance(result, ExperimentResult) else {"benchmark": result}
+    lines = ["# AgentOS Reliability Benchmark Report", ""]
+    if isinstance(result, ExperimentResult):
+        lines.extend([f"Baseline: {_cell(result.baseline)}", ""])
+    for name, benchmark in results.items():
+        metrics = benchmark.metrics
+        lines.extend([
+            f"## {_cell(name)}", "",
+            f"Total Tasks: {metrics.total_tasks}", "",
+            f"Trials: {metrics.total_trials}", "",
+            "| Metric | Value |", "| --- | ---: |",
+            f"| pass@1 | {_rate(metrics.pass_at_1)} |",
+            f"| Success Rate | {_rate(metrics.success_rate)} |",
+            f"| Observed Recovery Rate | {_rate(metrics.recovery_rate)} |",
+        ])
+        lines.extend(f"| pass^{k} | {_rate(value)} |"
+                     for k, value in metrics.pass_power_k.items())
+        lines.extend([
+            "", f"Recovery coverage: {metrics.recovered_trials}/{metrics.recovery_trials}.",
+            f"Trace coverage: {metrics.trace_covered_trials}/{metrics.total_trials}.", "",
+            "### Failure Categories", "", "| Category | Failed Trials |", "| --- | ---: |",
+        ])
+        lines.extend(f"| {category} | {count} |"
+                     for category, count in metrics.failure_distribution.items())
+        if not metrics.failure_distribution:
+            lines.append("| none | 0 |")
+        lines.append("")
+    lines.extend([
+        "pass^k requires all k trials to succeed; it is not best-of-k.",
+        "N/A indicates no applicable samples or k exceeding repeats.",
+        "Recovery counts task success after an observed tool failure or planner repair attempt;",
+        "missing events cannot demonstrate absence of failures. These prototype metrics do not",
+        "constitute tau-bench results or statistical evidence of causal improvement.", "",
+    ])
+    return "\n".join(lines)
+
+
+def write_reliability_report(
+    result: BenchmarkResult | ExperimentResult,
+    path: str | Path = "reliability_benchmark_report.md",
+) -> Path:
+    report_path = Path(path)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(render_reliability_report(result), encoding="utf-8")
     return report_path
