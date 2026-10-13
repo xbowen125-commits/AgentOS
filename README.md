@@ -10,7 +10,7 @@ with multimodal interaction support.**
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![MIT License](https://img.shields.io/badge/License-MIT-22C55E)
 ![Version v1.0.0](https://img.shields.io/badge/Version-v1.0.0-7C3AED)
-![Tests 87 passing](https://img.shields.io/badge/Tests-87%20passing-16A34A)
+![Tests 183 passing](https://img.shields.io/badge/Tests-183%20passing-16A34A)
 
 AgentOS is a compact, typed, async-first runtime for learning and building production-style
 LLM agents without hiding the execution model behind a large agent framework. Its ports and
@@ -24,6 +24,8 @@ adapters design keeps models, tools, memory, tracing, and multimodal interaction
 - Tool registry, executor, structured observations, and a safe calculator
 - Abstract memory store with atomic JSON persistence
 - Runtime events, JSON traces, latency profiling, cache, and timeout controls
+- Native MiniLLM-Serve SSE streaming with token events and lifecycle management
+- Sequential multi-tool workflows with automatic tool contracts and workflow events
 - Trace-driven evaluation and performance benchmark reports
 - Multimodal interaction adapters and privacy-conscious NPC memory
 - Python 3.10+ typing, tests, Ruff, and mypy validation
@@ -189,11 +191,13 @@ outside the memory adapter's scope. Read the
 - [Spatial AI NPC Integration](docs/npc_integration.md)
 - [Design Principles](docs/design_principles.md)
 - [Real MiniLLM Backend Integration](docs/real_backend.md)
+- [Native Streaming Runtime](docs/streaming.md)
+- [Multi Tool Workflow Runtime](docs/workflow.md)
 - [v1.0.0 Release Notes](release/v1.0.0.md)
 
 ## Roadmap
 
-- Production MiniLLM-Serve streaming transport
+- Additional streaming model backend adapters
 - SQLite and vector-backed memory adapters
 - Web search, code execution, and vision tools
 - Multi-agent coordination experiments

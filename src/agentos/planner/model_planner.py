@@ -11,6 +11,8 @@ from agentos.planner.prompt import build_planner_prompt
 from agentos.planner.retry import PlannerRetryController
 from agentos.planner.tool_prompt import ToolDescription
 from agentos.planner.validator import DecisionValidator
+from agentos.tools.metadata import describe_registry
+from agentos.tools.registry import ToolRegistry
 
 
 class ModelPlanner(Planner):
@@ -28,6 +30,23 @@ class ModelPlanner(Planner):
         self.tools = tuple(tools or ())
         self.validator = DecisionValidator(tools, required_tool)
         self.retry_controller = PlannerRetryController(max_retries, event_bus)
+
+    @classmethod
+    def from_registry(
+        cls,
+        model: Model,
+        registry: ToolRegistry,
+        *,
+        max_retries: int = 2,
+        event_bus: EventBus | None = None,
+        required_tool: str | None = None,
+    ) -> "ModelPlanner":
+        """Snapshot all registered tool contracts for prompt injection and validation."""
+        descriptions = [
+            ToolDescription(item.name, item.description, item.input_schema)
+            for item in describe_registry(registry)
+        ]
+        return cls(model, descriptions, max_retries, event_bus, required_tool)
 
     async def plan(self, state: AgentState) -> AgentDecision:
         prompt = build_planner_prompt(state, self.tools)

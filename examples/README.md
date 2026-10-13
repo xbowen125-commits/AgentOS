@@ -43,3 +43,26 @@ python examples/real_mini_llm_agent.py
 ```
 
 See `docs/real_backend.md` for the HTTP contract, trace guarantees, and troubleshooting.
+
+## Native SSE Calculator Demo
+
+With the same local MiniLLM configuration and running server:
+
+```powershell
+python examples/real_mini_llm_stream.py
+```
+
+This demo prints native streaming chunks while the existing Agent performs planning, calculator
+execution, and observation-grounded final answering. See `docs/streaming.md` for lifecycle events.
+
+## Multi Tool Workflow Demo
+
+Run the deterministic offline calculator-to-formatter workflow:
+
+```powershell
+python examples/multi_tool_workflow.py
+```
+
+The runtime automatically injects both registered tool contracts and records each tool attempt
+and workflow event. This example uses FakeModel and requires no serving backend. See
+`docs/workflow.md` for composition, failure recovery, and limits.

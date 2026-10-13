@@ -3,7 +3,7 @@
 import ast
 import operator
 from collections.abc import Callable
-from typing import Any, cast
+from typing import Any, ClassVar, cast
 
 from agentos.interfaces.tool import Tool
 
@@ -28,6 +28,13 @@ class CalculatorTool(Tool):
     """Evaluate expressions containing only basic arithmetic operations."""
 
     name = "calculator"
+    description = "Evaluate a mathematical expression using +, -, *, / and parentheses."
+    input_schema: ClassVar[dict[str, Any]] = {
+        "type": "object",
+        "properties": {"expression": {"type": "string", "maxLength": 200}},
+        "required": ["expression"],
+        "additionalProperties": False,
+    }
     max_expression_length = 200
     max_ast_nodes = 50
     max_integer_bits = 256

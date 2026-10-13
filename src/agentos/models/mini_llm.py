@@ -1,6 +1,8 @@
 """Model adapter for the MiniLLM-Serve HTTP API."""
 
+import json
 from collections.abc import AsyncIterator
+from contextlib import aclosing
 from dataclasses import dataclass
 from typing import Any
 
@@ -52,10 +54,52 @@ class MiniLLMModel(Model):
         return self._response_text(response)
 
     async def stream(self, prompt: str) -> AsyncIterator[str]:
-        """Yield ordered chunks from one non-streaming MiniLLM response."""
-        response = await self.generate(prompt)
-        for chunk in response:
-            yield chunk
+        """Yield native text deltas from MiniLLM-Serve's SSE chat endpoint."""
+        model_name = await self._resolve_model_name()
+        payload = {
+            "model": model_name,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": self.config.max_tokens,
+            "stream": True,
+        }
+        endpoint = f"{self.config.base_url.rstrip('/')}/v1/chat/completions"
+        finished = False
+        async with aclosing(
+            self.http_client.post_sse(endpoint, payload, timeout=self.config.timeout)
+        ) as messages:
+            async for message in messages:
+                if message.strip() == "[DONE]":
+                    if not finished:
+                        raise MiniLLMResponseError("MiniLLM-Serve stream has no completion chunk")
+                    return
+                try:
+                    chunk: Any = json.loads(message)
+                except ValueError:
+                    raise MiniLLMResponseError("MiniLLM-Serve stream contains invalid JSON") from None
+                if not isinstance(chunk, dict):
+                    raise MiniLLMResponseError("MiniLLM-Serve stream chunk must be a JSON object")
+                if "error" in chunk:
+                    raise MiniLLMResponseError("MiniLLM-Serve reported a streaming error")
+                if finished:
+                    raise MiniLLMResponseError("MiniLLM-Serve sent a chunk after completion")
+                choices = chunk.get("choices")
+                if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+                    raise MiniLLMResponseError("MiniLLM-Serve stream chunk must contain choices")
+                choice = choices[0]
+                delta = choice.get("delta")
+                if not isinstance(delta, dict):
+                    raise MiniLLMResponseError("MiniLLM-Serve stream choice must contain delta")
+                token = delta.get("content")
+                if token is not None and not isinstance(token, str):
+                    raise MiniLLMResponseError("MiniLLM-Serve stream content must be a string")
+                reason = choice.get("finish_reason")
+                if reason is not None:
+                    if reason not in ("stop", "length"):
+                        raise MiniLLMResponseError("MiniLLM-Serve stream finish_reason is invalid")
+                    finished = True
+                if token:
+                    yield token
+        raise MiniLLMResponseError("MiniLLM-Serve stream ended before [DONE]")
 
     async def _resolve_model_name(self) -> str:
         if self._model_name is not None:

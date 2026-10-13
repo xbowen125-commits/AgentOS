@@ -1,5 +1,6 @@
 """HTTP boundary used by model adapters."""
 
+from collections.abc import AsyncGenerator
 from typing import Any
 
 import httpx
@@ -38,6 +39,44 @@ class HttpClient:
     ) -> dict[str, Any]:
         """POST a JSON object and return a validated JSON object response."""
         return await self._request_json_object("POST", url, payload=payload, timeout=timeout)
+
+    async def post_sse(
+        self,
+        url: str,
+        payload: dict[str, Any],
+        timeout: float,
+    ) -> AsyncGenerator[str, None]:
+        """Yield SSE data messages without buffering the complete HTTP response."""
+        try:
+            async with (
+                httpx.AsyncClient(transport=self._transport, timeout=timeout) as client,
+                client.stream(
+                    "POST", url, json=payload, headers={"Accept": "text/event-stream"}
+                ) as response,
+            ):
+                if not 200 <= response.status_code < 300:
+                    raise MiniLLMResponseError(
+                        f"MiniLLM-Serve returned HTTP status {response.status_code}"
+                    )
+                content_type = response.headers.get("content-type", "").split(";", 1)[0]
+                if content_type.strip().lower() != "text/event-stream":
+                    raise MiniLLMResponseError("MiniLLM-Serve response must be text/event-stream")
+                response.encoding = "utf-8"
+                data_lines: list[str] = []
+                async for line in response.aiter_lines():
+                    if line == "":
+                        if data_lines:
+                            yield "\n".join(data_lines)
+                            data_lines.clear()
+                    elif line.startswith("data:"):
+                        data_lines.append(line[5:].removeprefix(" "))
+                    # SSE comments and event/id/retry fields carry no token data.
+                if data_lines:
+                    yield "\n".join(data_lines)
+        except httpx.TimeoutException:
+            raise MiniLLMConnectionError(f"MiniLLM-Serve stream timed out after {timeout}s") from None
+        except httpx.RequestError:
+            raise MiniLLMConnectionError("MiniLLM-Serve streaming connection failed") from None
 
     async def _request_json_object(
         self,
