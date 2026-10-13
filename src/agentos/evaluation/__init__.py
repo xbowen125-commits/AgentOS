@@ -1,10 +1,24 @@
 """Trace-driven evaluation for Agent and Workflow runs."""
 
+from agentos.evaluation.checker import StateChecker
 from agentos.evaluation.evaluator import EvaluationResult, Evaluator, ExpectedResult
 from agentos.evaluation.metrics import EvaluationMetrics
 from agentos.evaluation.report import render_markdown_report, write_markdown_report
+from agentos.evaluation.result import EvaluationResult as StateEvaluationResult
+from agentos.evaluation.runner import EvaluationRunner
+from agentos.evaluation.state import AgentState as EvaluationState
+from agentos.evaluation.task import EvaluationTask
 
 __all__ = [
-    "EvaluationMetrics", "EvaluationResult", "Evaluator", "ExpectedResult",
-    "render_markdown_report", "write_markdown_report",
+    "EvaluationMetrics",
+    "EvaluationResult",
+    "EvaluationRunner",
+    "EvaluationState",
+    "EvaluationTask",
+    "Evaluator",
+    "ExpectedResult",
+    "StateChecker",
+    "StateEvaluationResult",
+    "render_markdown_report",
+    "write_markdown_report",
 ]
