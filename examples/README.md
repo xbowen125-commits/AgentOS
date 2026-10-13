@@ -66,3 +66,14 @@ python examples/multi_tool_workflow.py
 The runtime automatically injects both registered tool contracts and records each tool attempt
 and workflow event. This example uses FakeModel and requires no serving backend. See
 `docs/workflow.md` for composition, failure recovery, and limits.
+
+## Evaluation Report
+
+Run the existing offline benchmark cases through the trace-driven evaluation layer:
+
+```powershell
+python -m examples.evaluate_agent
+```
+
+The Markdown report is written to `outputs/evaluation_report.md`. See `docs/evaluation.md` for
+metric definitions, coverage, Workflow scoring, and recovery evidence.

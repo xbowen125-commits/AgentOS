@@ -10,7 +10,7 @@ with multimodal interaction support.**
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![MIT License](https://img.shields.io/badge/License-MIT-22C55E)
 ![Version v1.0.0](https://img.shields.io/badge/Version-v1.0.0-7C3AED)
-![Tests 183 passing](https://img.shields.io/badge/Tests-183%20passing-16A34A)
+![Tests 199 passing](https://img.shields.io/badge/Tests-199%20passing-16A34A)
 
 AgentOS is a compact, typed, async-first runtime for learning and building production-style
 LLM agents without hiding the execution model behind a large agent framework. Its ports and
@@ -193,6 +193,7 @@ outside the memory adapter's scope. Read the
 - [Real MiniLLM Backend Integration](docs/real_backend.md)
 - [Native Streaming Runtime](docs/streaming.md)
 - [Multi Tool Workflow Runtime](docs/workflow.md)
+- [Agent Evaluation Layer](docs/evaluation.md)
 - [v1.0.0 Release Notes](release/v1.0.0.md)
 
 ## Roadmap
